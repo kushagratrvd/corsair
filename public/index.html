@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Better Auth</title>
+</head>
+<body style="font-family: sans-serif; padding: 2rem;">
+    <h2>Test Google Sign In</h2>
+    <p>Social sign-in requires a POST request, which is why visiting the URL directly in the browser returned a 404.</p>
+    
+    <button id="login-btn" style="padding: 10px 20px; font-size: 16px; cursor: pointer; background: #4285F4; color: white; border: none; border-radius: 4px;">
+        Sign in with Google
+    </button>
+
+    <script>
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            const response = await fetch('/api/auth/sign-in/social', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    provider: 'google',
+                    callbackURL: '/dashboard'
+                })
+            });
+            const data = await response.json();
+            if (data.url) {
+                // Redirect the user to Google's OAuth consent screen
+                window.location.href = data.url;
+            } else {
+                alert('Failed to initiate login. Check console.');
+                console.error(data);
+            }
+        });
+    </script>
+</body>
+</html>
